@@ -37,8 +37,8 @@
   .game-card.disabled { opacity: 0.45; cursor: default; pointer-events: none; }
 
   .game-icon { font-size: 28px; width: 44px; text-align: center; flex-shrink: 0; }
-  .tile-wrap { width: 44px; height: 44px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
-  .tile-img-crop { width: 160%; height: 160%; object-fit: cover; object-position: 50% 48%; margin-left: -30%; margin-top: -28%; display: block; }
+  .tile-wrap { width: 44px; height: 44px; flex-shrink: 0; }
+  .tile-img-crop { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; object-position: center center; display: block; }
   .game-info { flex: 1; }
   .game-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
   .game-sub { font-size: 13px; color: var(--text2); }
@@ -67,13 +67,13 @@
       <span class="badge-soon">Binnenkort</span>
     </a>
 
-    <a href="regenwormen.html" class="game-card disabled">
+    <a href="regenwormen.html" class="game-card">
       <div class="game-icon">🪱</div>
       <div class="game-info">
         <div class="game-name">Regenwormen Champions League</div>
         <div class="game-sub">Dobbelspel om de meeste wormen</div>
       </div>
-      <span class="badge-soon">Binnenkort</span>
+      <span class="game-arrow">›</span>
     </a>
 
     <a href="rummikub.html" class="game-card">
