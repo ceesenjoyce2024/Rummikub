@@ -208,15 +208,12 @@ async function init() {
     // Seed als leeg
     const snap = await rootRef.child('comps').once('value');
     if (!snap.exists()) {
-      const updates = {};
-      SEED_COMPS.forEach(c => {
-        updates[`comps/${c.id}`] = { label: c.label, players: c.players };
-        c.games.forEach(g => {
-          const key = rootRef.child(`comps/${c.id}/games`).push().key;
-          updates[`comps/${c.id}/games/${key}`] = g;
-        });
-      });
-      await rootRef.update(updates);
+      for (const c of SEED_COMPS) {
+        await rootRef.child(`comps/${c.id}`).set({ label: c.label, players: c.players });
+        for (const g of c.games) {
+          await rootRef.child(`comps/${c.id}/games`).push(g);
+        }
+      }
     }
     // Live listener op competities
     rootRef.child('comps').on('value', snap => {
