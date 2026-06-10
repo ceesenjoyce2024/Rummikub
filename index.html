@@ -3,21 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Champions League Rummikub</title>
+<title>Champions League — Spelkeuze</title>
 <style>
   :root {
-    --purple-50: #EEEDFE; --purple-200: #AFA9EC; --purple-600: #534AB7; --purple-800: #3C3489;
-    --teal-50: #E1F5EE; --teal-600: #0F6E56; --teal-800: #085041;
-    --amber-50: #FAEEDA; --amber-600: #854F0B; --amber-800: #633806;
-    --gray-50: #F1EFE8; --gray-100: #D3D1C7; --gray-400: #888780; --gray-800: #444441;
-    --green-50: #EAF3DE; --green-600: #3B6D11; --green-800: #27500A;
-    --red-50: #FCEBEB; --red-600: #A32D2D; --red-800: #791F1F;
-    --gold: #B8860B;
+    --purple-800: #3C3489; --purple-600: #534AB7; --purple-50: #EEEDFE; --purple-200: #AFA9EC;
     --bg: #fff; --bg2: #F8F7F4; --bg3: #F1EFE8;
     --text: #1a1a18; --text2: #5F5E5A; --text3: #888780;
     --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
     --radius: 10px; --radius-lg: 14px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.07);
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -29,434 +22,70 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
 
-  /* Header */
   header { background: var(--purple-800); color: #fff; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 12px; }
   header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
-  .back-btn { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 20px; line-height: 1; flex-shrink: 0; margin-right: 2px; transition: color 0.15s; }
-  .back-btn:hover { color: #fff; }
   header .trophy { font-size: 22px; }
-  .conn-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-left: auto; flex-shrink: 0; transition: background 0.3s; }
-  .conn-dot.online { background: #5DCAA5; }
 
-  /* Tabs */
-  .tabs { background: var(--bg); border-bottom: 0.5px solid var(--border); display: flex; overflow-x: auto; gap: 0; padding: 0 1rem; }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab { padding: 12px 16px; font-size: 13px; font-weight: 500; color: var(--text2); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.15s; }
-  .tab.active { color: var(--purple-800); border-bottom-color: var(--purple-600); }
+  main { max-width: 500px; margin: 0 auto; padding: 2rem 1rem; }
 
-  /* Main layout */
-  main { max-width: 700px; margin: 0 auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
+  .intro { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; }
 
-  /* Cards */
-  .card { background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); overflow: hidden; }
-  .card-head { padding: 14px 16px 10px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text2); }
-  .card-body { padding: 16px; }
+  .game-list { display: flex; flex-direction: column; gap: 12px; }
 
-  /* Standings */
-  .stand-grid { display: grid; gap: 10px; }
-  .stand-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg2); border-radius: var(--radius); border: 0.5px solid var(--border); }
-  .stand-rank { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
-  .stand-name { font-size: 15px; font-weight: 500; flex: 1; }
-  .stand-stats { display: flex; gap: 14px; align-items: center; }
-  .stand-stat { text-align: center; }
-  .stand-stat-val { font-size: 18px; font-weight: 600; color: var(--purple-600); display: block; }
-  .stand-stat-lbl { font-size: 11px; color: var(--text3); white-space: nowrap; }
-  .stand-item.rank-1 .stand-stat-val { color: var(--gold); }
-  @media (prefers-color-scheme: dark) {
-    .stand-item.rank-1 { background: #2a2510; border-color: rgba(185,134,11,0.3); }
-  }
+  .game-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; text-decoration: none; color: var(--text); transition: border-color 0.15s, background 0.15s; }
+  .game-card:hover { border-color: var(--purple-200); background: var(--purple-50); }
+  .game-card.disabled { opacity: 0.45; cursor: default; pointer-events: none; }
 
-  /* Form */
-  .form-grid { display: flex; flex-direction: column; gap: 12px; }
-  .form-row { display: flex; align-items: center; gap: 10px; }
-  .form-row label { font-size: 14px; font-weight: 500; color: var(--text); min-width: 72px; }
-  .form-row input[type="text"], .form-row input[type="number"], .form-row input[type="date"] {
-    flex: 1; padding: 8px 12px; border: 0.5px solid var(--border2); border-radius: var(--radius); font-size: 14px;
-    background: var(--bg2); color: var(--text); outline: none; transition: border 0.15s;
-  }
-  .form-row input:focus { border-color: var(--purple-600); }
-  .score-inputs { display: grid; gap: 8px; }
-  .score-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bg2); border-radius: var(--radius); border: 0.5px solid var(--border); }
-  .score-row .pname { font-size: 14px; font-weight: 500; flex: 1; }
-  .score-row input { width: 80px; padding: 6px 10px; border: 0.5px solid var(--border2); border-radius: 8px; font-size: 16px; text-align: center; background: var(--bg); color: var(--text); outline: none; }
-  .score-row input:focus { border-color: var(--purple-600); }
-  .hint { font-size: 12px; color: var(--text3); margin-top: 2px; }
-  .btn-save { width: 100%; padding: 11px; border-radius: var(--radius); border: none; background: var(--purple-800); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
-  .btn-save:hover { opacity: 0.88; }
-  .btn-save:active { opacity: 0.75; }
-
-  /* Games table */
-  .games-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { padding: 8px 10px; text-align: left; color: var(--text2); font-weight: 500; border-bottom: 0.5px solid var(--border); white-space: nowrap; }
-  th.num, td.num { text-align: center; }
-  td { padding: 9px 10px; border-bottom: 0.5px solid var(--border); color: var(--text); }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--bg2); }
-  .date-cell { color: var(--text2); font-size: 12px; white-space: nowrap; }
-  .score-cell { text-align: center; font-weight: 500; }
-  .score-cell.winner { color: var(--teal-600); font-weight: 700; position: relative; }
-  .score-cell.winner::after { content: ' ✓'; font-size: 11px; }
-  .del-btn { padding: 3px 8px; border-radius: 6px; border: 0.5px solid var(--border2); background: none; color: var(--text3); cursor: pointer; font-size: 11px; }
-  .del-btn:hover { background: var(--red-50); color: var(--red-600); border-color: rgba(163,45,45,0.3); }
-
-  /* Empty / loading */
-  .empty { padding: 2rem; text-align: center; color: var(--text3); font-size: 14px; }
-  .loading { padding: 2rem; text-align: center; color: var(--text2); font-size: 14px; }
-
-  /* Toast */
-  #toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--gray-800); color: #fff; padding: 9px 20px; border-radius: 999px; font-size: 13px; font-weight: 500; transition: transform 0.25s; z-index: 999; pointer-events: none; }
-  #toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* Responsive */
-  @media (max-width: 500px) {
-    main { padding: 0.75rem 0.75rem; }
-    .card-body { padding: 12px; }
-    .stand-wins { font-size: 18px; }
-  }
+  .game-icon { font-size: 28px; width: 44px; text-align: center; flex-shrink: 0; }
+  .tile-img { width: 52px; height: 64px; object-fit: cover; border-radius: 8px; border: 1.5px solid rgba(0,0,0,0.15); box-shadow: 1px 2px 5px rgba(0,0,0,0.18); flex-shrink: 0; }
+  .game-info { flex: 1; }
+  .game-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+  .game-sub { font-size: 13px; color: var(--text2); }
+  .game-arrow { font-size: 18px; color: var(--text3); flex-shrink: 0; }
+  .badge-soon { font-size: 11px; font-weight: 500; background: var(--bg3); color: var(--text3); border: 0.5px solid var(--border2); border-radius: 999px; padding: 2px 9px; flex-shrink: 0; }
 </style>
 </head>
 <body>
 
 <header>
-  <a href="index.html" class="back-btn" title="Terug naar spelkeuze">&lsaquo;</a>
   <span class="trophy">🏆</span>
-  <h1>Champions League Rummikub</h1>
-  <div class="conn-dot" id="connDot" title="Firebase verbinding"></div>
+  <h1>Champions League</h1>
 </header>
 
-<div class="tabs" id="tabBar"></div>
+<main>
+  <p class="intro">Kies een spel om de stand en uitslagen te bekijken.</p>
 
-<main id="mainContent">
-  <div class="loading">Laden…</div>
+  <div class="game-list">
+
+    <a href="bananas.html" class="game-card disabled">
+      <div class="game-icon">🍌</div>
+      <div class="game-info">
+        <div class="game-name">Bananas Champions League</div>
+        <div class="game-sub">Woordspel met letter-tegels</div>
+      </div>
+      <span class="badge-soon">Binnenkort</span>
+    </a>
+
+    <a href="regenwormen.html" class="game-card disabled">
+      <div class="game-icon">🪱</div>
+      <div class="game-info">
+        <div class="game-name">Regenwormen Champions League</div>
+        <div class="game-sub">Dobbelspel om de meeste wormen</div>
+      </div>
+      <span class="badge-soon">Binnenkort</span>
+    </a>
+
+    <a href="rummikub.html" class="game-card">
+      <img src="rummikub-tiles.png" class="tile-img" alt="Rummikub stenen">
+      <div class="game-info">
+        <div class="game-name">Rummikub Champions League</div>
+        <div class="game-sub">Stand, uitslagen en statistieken</div>
+      </div>
+      <span class="game-arrow">›</span>
+    </a>
+
+  </div>
 </main>
 
-<div id="toast"></div>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<script>
-// ══════════════════════════════════════════
-// FIREBASE CONFIG — vervang met jouw gegevens
-// ══════════════════════════════════════════
-const firebaseConfig = {
-  apiKey: "AIzaSyB1x5ZRLKxI84LPQZxfPp453PTBng0Zw8I",
-  authDomain: "rummikub-76911.firebaseapp.com",
-  databaseURL: "https://rummikub-76911-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "rummikub-76911",
-  storageBucket: "rummikub-76911.firebasestorage.app",
-  messagingSenderId: "790361424918",
-  appId: "1:790361424918:web:3d18c76e6c409926aee137"
-};
-
-// ══════════════════════════════════════════
-// COMPETITIES — spelers per competitie
-// ══════════════════════════════════════════
-const COMPS = [
-  { id: "comp1", label: "Papa/Mama/Jesper/Riva", players: ["Papa","Mama","Jesper","Riva"] },
-  { id: "comp2", label: "Papa/Mama/Riva", players: ["Papa","Mama","Riva"] },
-  { id: "comp3", label: "Papa/Riva", players: ["Papa","Riva"] },
-  { id: "comp4", label: "Papa & Mama", players: ["Papa","Mama"] }
-];
-
-// ══════════════════════════════════════════
-// HISTORISCHE DATA (initieel inladen)
-// ══════════════════════════════════════════
-const SEED = {
-  comp1: [
-    {d:"01-01-2026",s:{Riva:3,Jesper:3,Mama:0,Papa:0}},{d:"01-01-2026",s:{Riva:2,Jesper:2,Mama:0,Papa:0}},
-    {d:"01-01-2026",s:{Riva:0,Jesper:3,Mama:0,Papa:3}},{d:"01-01-2026",s:{Riva:23,Jesper:0,Mama:41,Papa:0}},
-    {d:"01-01-2026",s:{Riva:37,Jesper:0,Mama:37,Papa:0}},{d:"18-02-2026",s:{Riva:0,Jesper:38,Mama:0,Papa:38}},
-    {d:"18-02-2026",s:{Riva:24,Jesper:0,Mama:44,Papa:0}},{d:"18-02-2026",s:{Riva:26,Jesper:0,Mama:0,Papa:26}},
-    {d:"26-03-2026",s:{Riva:7,Jesper:0,Mama:5,Papa:18}},{d:"26-03-2026",s:{Riva:5,Jesper:7,Mama:11,Papa:0}},
-    {d:"26-03-2026",s:{Riva:0,Jesper:6,Mama:8,Papa:1}},{d:"26-03-2026",s:{Riva:7,Jesper:12,Mama:4,Papa:0}},
-    {d:"30-03-2026",s:{Riva:16,Jesper:0,Mama:2,Papa:30}},{d:"18-04-2026",s:{Riva:24,Jesper:24,Mama:0,Papa:0}},
-    {d:"20-04-2026",s:{Riva:70,Jesper:65,Mama:13,Papa:0}},{d:"20-04-2026",s:{Riva:16,Jesper:0,Mama:27,Papa:52}},
-    {d:"20-04-2026",s:{Riva:0,Jesper:16,Mama:16,Papa:0}}
-  ],
-  comp2: [
-    {d:"18-02-2026",s:{Riva:1,Mama:0,Papa:40}},{d:"18-02-2026",s:{Riva:2,Mama:0,Papa:17}},
-    {d:"18-02-2026",s:{Riva:9,Mama:0,Papa:15}},{d:"18-02-2026",s:{Riva:31,Mama:0,Papa:25}},
-    {d:"18-02-2026",s:{Riva:25,Mama:0,Papa:16}},{d:"23-03-2026",s:{Riva:33,Mama:37,Papa:0}},
-    {d:"23-03-2026",s:{Riva:13,Mama:4,Papa:0}},{d:"23-03-2026",s:{Riva:12,Mama:1,Papa:0}},
-    {d:"25-03-2026",s:{Riva:18,Mama:0,Papa:39}},{d:"25-03-2026",s:{Riva:9,Mama:11,Papa:0}},
-    {d:"28-03-2026",s:{Riva:13,Mama:0,Papa:44}},{d:"28-03-2026",s:{Riva:29,Mama:0,Papa:14}},
-    {d:"28-03-2026",s:{Riva:11,Mama:0,Papa:12}},{d:"28-03-2026",s:{Riva:12,Mama:0,Papa:12}},
-    {d:"28-03-2026",s:{Riva:24,Mama:10,Papa:0}},{d:"28-03-2026",s:{Riva:0,Mama:28,Papa:38}},
-    {d:"30-03-2026",s:{Riva:8,Mama:0,Papa:19}},{d:"11-04-2026",s:{Riva:52,Mama:0,Papa:47}},
-    {d:"11-04-2026",s:{Riva:41,Mama:0,Papa:41}},{d:"11-04-2026",s:{Riva:20,Mama:11,Papa:0}},
-    {d:"12-04-2026",s:{Riva:0,Mama:6,Papa:8}},{d:"12-04-2026",s:{Riva:14,Mama:2,Papa:0}},
-    {d:"13-04-2026",s:{Riva:0,Mama:14,Papa:22}},{d:"13-04-2026",s:{Riva:17,Mama:0,Papa:19}},
-    {d:"13-04-2026",s:{Riva:0,Mama:10,Papa:1}},{d:"14-04-2026",s:{Riva:63,Mama:34,Papa:0}},
-    {d:"14-04-2026",s:{Riva:12,Mama:0,Papa:12}},{d:"14-04-2026",s:{Riva:2,Mama:0,Papa:18}},
-    {d:"15-04-2026",s:{Riva:2,Mama:0,Papa:7}},{d:"15-04-2026",s:{Riva:21,Mama:7,Papa:0}},
-    {d:"15-04-2026",s:{Riva:19,Mama:0,Papa:47}}
-  ],
-  comp3: [
-    {d:"19-02-2026",s:{Riva:0,Papa:54}},{d:"19-02-2026",s:{Riva:0,Papa:4}},{d:"19-02-2026",s:{Riva:0,Papa:32}},
-    {d:"24-03-2026",s:{Riva:22,Papa:0}},{d:"24-03-2026",s:{Riva:0,Papa:4}},{d:"24-03-2026",s:{Riva:1,Papa:0}},
-    {d:"12-04-2026",s:{Riva:29,Papa:0}},{d:"12-04-2026",s:{Riva:0,Papa:58}},
-    {d:"13-04-2026",s:{Riva:0,Papa:23}},{d:"13-04-2026",s:{Riva:0,Papa:40}}
-  ],
-  comp4: [
-    {d:"30-03-2026",s:{Mama:0,Papa:17}},{d:"30-03-2026",s:{Mama:13,Papa:0}},{d:"30-03-2026",s:{Mama:4,Papa:0}},
-    {d:"30-03-2026",s:{Mama:0,Papa:10}},{d:"11-04-2026",s:{Mama:0,Papa:4}},{d:"21-04-2026",s:{Mama:7,Papa:0}},
-    {d:"21-04-2026",s:{Mama:0,Papa:23}},{d:"21-04-2026",s:{Mama:3,Papa:0}},{d:"21-04-2026",s:{Mama:28,Papa:0}},
-    {d:"21-04-2026",s:{Mama:0,Papa:3}},{d:"21-04-2026",s:{Mama:0,Papa:9}},{d:"21-04-2026",s:{Mama:0,Papa:22}},
-    {d:"21-04-2026",s:{Mama:66,Papa:0}},{d:"21-04-2026",s:{Mama:10,Papa:0}},{d:"21-04-2026",s:{Mama:25,Papa:0}},
-    {d:"21-04-2026",s:{Mama:0,Papa:13}}
-  ]
-};
-
-// ══════════════════════════════════════════
-// APP STATE
-// ══════════════════════════════════════════
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-let activeComp = COMPS[0].id;
-let gamesCache = {};
-let listeners = {};
-
-function ref(compId) { return db.ref('rummikub/' + compId + '/games'); }
-
-// Verbindingsstatus
-db.ref('.info/connected').on('value', snap => {
-  document.getElementById('connDot').classList.toggle('online', !!snap.val());
-});
-
-// ══════════════════════════════════════════
-// SEED — eenmalig inladen als db leeg is
-// ══════════════════════════════════════════
-async function seedIfEmpty() {
-  for (const comp of COMPS) {
-    const snap = await db.ref('rummikub/' + comp.id + '/games').once('value');
-    if (!snap.exists()) {
-      const items = SEED[comp.id] || [];
-      const updates = {};
-      items.forEach(item => {
-        const key = db.ref('rummikub/' + comp.id + '/games').push().key;
-        updates[key] = item;
-      });
-      await db.ref('rummikub/' + comp.id + '/games').update(updates);
-    }
-  }
-}
-
-// ══════════════════════════════════════════
-// TABS
-// ══════════════════════════════════════════
-function renderTabs() {
-  document.getElementById('tabBar').innerHTML = COMPS.map(c =>
-    `<button class="tab${c.id===activeComp?' active':''}" onclick="switchComp('${c.id}')">${c.label}</button>`
-  ).join('');
-}
-
-function switchComp(id) {
-  if (listeners[activeComp]) {
-    ref(activeComp).off('value', listeners[activeComp]);
-    delete listeners[activeComp];
-  }
-  activeComp = id;
-  renderTabs();
-  listenComp(id);
-}
-
-// ══════════════════════════════════════════
-// REALTIME LISTENER
-// ══════════════════════════════════════════
-function listenComp(compId) {
-  document.getElementById('mainContent').innerHTML = '<div class="loading">Laden…</div>';
-  const handler = snap => {
-    const raw = snap.val() || {};
-    const games = Object.entries(raw).map(([k,v]) => ({key:k, ...v}));
-    games.sort((a,b) => {
-      const pa = a.d.split('-').reverse().join('');
-      const pb = b.d.split('-').reverse().join('');
-      return pa.localeCompare(pb) || 0;
-    });
-    gamesCache[compId] = games;
-    renderAll(compId, games);
-  };
-  listeners[compId] = handler;
-  ref(compId).on('value', handler);
-}
-
-// ══════════════════════════════════════════
-// RENDER
-// ══════════════════════════════════════════
-function getWinner(scores) {
-  let min = Infinity, winner = null;
-  for (const [p,s] of Object.entries(scores)) {
-    if (typeof s === 'number' && s < min) { min = s; winner = p; }
-  }
-  return winner;
-}
-
-function calcStandings(games, players) {
-  const stats = {};
-  players.forEach(p => stats[p] = {wins:0, games:0, total:0});
-  games.forEach(g => {
-    const sc = g.s || {};
-    players.forEach(p => {
-      if (p in sc) { stats[p].games++; stats[p].total += sc[p]; }
-    });
-    const w = getWinner(sc);
-    if (w && w in stats) stats[w].wins++;
-  });
-  return players.map(p => ({
-    name: p, wins: stats[p].wins, games: stats[p].games, total: stats[p].total,
-    avg: stats[p].games ? Math.round(stats[p].total / stats[p].games) : 0
-  })).sort((a,b) => a.total - b.total || b.wins - a.wins);
-}
-
-const MEDALS = ['🥇','🥈','🥉',''];
-
-function renderAll(compId, games) {
-  const comp = COMPS.find(c=>c.id===compId);
-  const players = comp.players;
-  const standings = calcStandings(games, players);
-
-  // Today for default date input
-  const now = new Date();
-  const todayVal = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  const todayDisplay = `${String(now.getDate()).padStart(2,'0')}-${String(now.getMonth()+1).padStart(2,'0')}-${now.getFullYear()}`;
-
-  // STANDINGS
-  const standHTML = `
-  <div class="card">
-    <div class="card-head"><span class="card-title">Stand</span><span style="font-size:12px;color:var(--text3)">${games.length} potjes gespeeld</span></div>
-    <div class="card-body">
-      <div class="stand-grid">
-        ${standings.map((s,i) => `
-          <div class="stand-item${i===0?' rank-1':''}">
-            <div class="stand-rank">${MEDALS[Math.min(i,3)]}</div>
-            <div class="stand-name">${s.name}</div>
-            <div class="stand-stats">
-              <div class="stand-stat">
-                <span class="stand-stat-val">${s.total}</span>
-                <span class="stand-stat-lbl">totaal pts</span>
-              </div>
-              <div class="stand-stat">
-                <span class="stand-stat-val">${s.wins}</span>
-                <span class="stand-stat-lbl">gewonnen</span>
-              </div>
-              <div class="stand-stat">
-                <span class="stand-stat-val">${s.avg}</span>
-                <span class="stand-stat-lbl">gem. pts</span>
-              </div>
-            </div>
-          </div>`).join('')}
-      </div>
-    </div>
-  </div>`;
-
-  // ADD FORM
-  const scoreInputs = players.map(p => `
-    <div class="score-row">
-      <span class="pname">${p}</span>
-      <input type="number" id="sc_${p}" min="0" value="0" inputmode="numeric">
-    </div>`).join('');
-
-  const formHTML = `
-  <div class="card">
-    <div class="card-head"><span class="card-title">Potje toevoegen</span></div>
-    <div class="card-body">
-      <div class="form-grid">
-        <div class="form-row">
-          <label>Datum</label>
-          <input type="date" id="new_date" value="${todayVal}">
-        </div>
-        <div class="score-inputs">${scoreInputs}</div>
-        <p class="hint">Vul de resterende punten in hand in. Laagste score = winnaar.</p>
-        <button class="btn-save" onclick="saveGame('${compId}')">Potje opslaan</button>
-      </div>
-    </div>
-  </div>`;
-
-  // GAMES TABLE
-  const revGames = [...games].reverse();
-  const tableRows = revGames.map(g => {
-    const sc = g.s || {};
-    const winner = getWinner(sc);
-    return `<tr>
-      <td class="date-cell">${g.d}</td>
-      ${players.map(p => `<td class="score-cell${p===winner?' winner':''}">${p in sc ? sc[p] : '—'}</td>`).join('')}
-      <td><button class="del-btn" onclick="deleteGame('${compId}','${g.key}')">✕</button></td>
-    </tr>`;
-  }).join('');
-
-  const tableHTML = `
-  <div class="card">
-    <div class="card-head"><span class="card-title">Alle potjes</span></div>
-    <div class="games-wrap">
-      <table>
-        <thead><tr>
-          <th>Datum</th>
-          ${players.map(p=>`<th class="num">${p}</th>`).join('')}
-          <th></th>
-        </tr></thead>
-        <tbody>${tableRows || `<tr><td colspan="${players.length+2}" class="empty">Nog geen potjes</td></tr>`}</tbody>
-      </table>
-    </div>
-  </div>`;
-
-  document.getElementById('mainContent').innerHTML = standHTML + formHTML + tableHTML;
-}
-
-// ══════════════════════════════════════════
-// SAVE GAME
-// ══════════════════════════════════════════
-function saveGame(compId) {
-  const comp = COMPS.find(c=>c.id===compId);
-  const dateInput = document.getElementById('new_date').value;
-  if (!dateInput) { showToast('Kies een datum'); return; }
-  const [y,m,d] = dateInput.split('-');
-  const dateStr = `${d}-${m}-${y}`;
-
-  const scores = {};
-  comp.players.forEach(p => {
-    scores[p] = parseInt(document.getElementById('sc_'+p).value) || 0;
-  });
-
-  ref(compId).push({ d: dateStr, s: scores })
-    .then(() => {
-      showToast('Potje opgeslagen ✓');
-      comp.players.forEach(p => { document.getElementById('sc_'+p).value = 0; });
-    })
-    .catch(() => showToast('Fout bij opslaan'));
-}
-
-// ══════════════════════════════════════════
-// DELETE GAME
-// ══════════════════════════════════════════
-function deleteGame(compId, key) {
-  if (!confirm('Potje verwijderen?')) return;
-  ref(compId).child(key).remove()
-    .then(() => showToast('Potje verwijderd'))
-    .catch(() => showToast('Fout bij verwijderen'));
-}
-
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
-let toastTimer;
-function showToast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
-}
-
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
-renderTabs();
-seedIfEmpty().then(() => listenComp(activeComp));
-</script>
 </body>
 </html>
