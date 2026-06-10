@@ -186,7 +186,9 @@ const SEED_COMPS = [
   }
 ];
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.database();
 const rootRef = db.ref('regenwormen');
 
@@ -202,31 +204,39 @@ db.ref('.info/connected').on('value', s => {
 
 // ── INIT ──────────────────────────────────
 async function init() {
-  // Seed als leeg
-  const snap = await rootRef.child('comps').once('value');
-  if (!snap.exists()) {
-    const updates = {};
-    SEED_COMPS.forEach(c => {
-      updates[`comps/${c.id}`] = { label: c.label, players: c.players };
-      c.games.forEach(g => {
-        const key = rootRef.child(`comps/${c.id}/games`).push().key;
-        updates[`comps/${c.id}/games/${key}`] = g;
+  try {
+    // Seed als leeg
+    const snap = await rootRef.child('comps').once('value');
+    if (!snap.exists()) {
+      const updates = {};
+      SEED_COMPS.forEach(c => {
+        updates[`comps/${c.id}`] = { label: c.label, players: c.players };
+        c.games.forEach(g => {
+          const key = rootRef.child(`comps/${c.id}/games`).push().key;
+          updates[`comps/${c.id}/games/${key}`] = g;
+        });
       });
-    });
-    await rootRef.update(updates);
-  }
-  // Live listener op competities
-  rootRef.child('comps').on('value', snap => {
-    const raw = snap.val() || {};
-    comps = Object.entries(raw).map(([id, v]) => ({ id, label: v.label, players: v.players || [] }));
-    comps.sort((a,b) => a.label.localeCompare(b.label));
-    if (!activeCompId || !comps.find(c=>c.id===activeCompId)) {
-      activeCompId = comps.length ? comps[0].id : null;
+      await rootRef.update(updates);
     }
-    renderTabs();
-    if (activeCompId) listenGames(activeCompId);
-    else document.getElementById('mainContent').innerHTML = '<div class="empty">Nog geen competities. Maak er een aan met de + knop.</div>';
-  });
+    // Live listener op competities
+    rootRef.child('comps').on('value', snap => {
+      const raw = snap.val() || {};
+      comps = Object.entries(raw).map(([id, v]) => ({ id, label: v.label, players: v.players || [] }));
+      comps.sort((a,b) => a.label.localeCompare(b.label));
+      if (!activeCompId || !comps.find(c=>c.id===activeCompId)) {
+        activeCompId = comps.length ? comps[0].id : null;
+      }
+      renderTabs();
+      if (activeCompId) listenGames(activeCompId);
+      else document.getElementById('mainContent').innerHTML = '<div class="empty">Nog geen competities. Maak er een aan met de + knop.</div>';
+    }, err => {
+      document.getElementById('mainContent').innerHTML = `<div class="empty">Kan geen verbinding maken met de database.<br><small>${err.message}</small></div>`;
+      document.getElementById('tabBar').innerHTML = '';
+    });
+  } catch(err) {
+    document.getElementById('mainContent').innerHTML = `<div class="empty">Fout bij laden: ${err.message}</div>`;
+    document.getElementById('tabBar').innerHTML = '';
+  }
 }
 
 // ── TABS ──────────────────────────────────
