@@ -37,7 +37,8 @@
   .game-card.disabled { opacity: 0.45; cursor: default; pointer-events: none; }
 
   .game-icon { font-size: 28px; width: 44px; text-align: center; flex-shrink: 0; }
-  .tile-img { width: 52px; height: 64px; object-fit: cover; border-radius: 8px; border: 1.5px solid rgba(0,0,0,0.15); box-shadow: 1px 2px 5px rgba(0,0,0,0.18); flex-shrink: 0; }
+  .tile-wrap { width: 44px; height: 44px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+  .tile-img-crop { width: 160%; height: 160%; object-fit: cover; object-position: 50% 48%; margin-left: -30%; margin-top: -28%; display: block; }
   .game-info { flex: 1; }
   .game-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
   .game-sub { font-size: 13px; color: var(--text2); }
@@ -76,7 +77,7 @@
     </a>
 
     <a href="rummikub.html" class="game-card">
-      <img src="rummikub-tiles.png" class="tile-img" alt="Rummikub stenen">
+      <div class="tile-wrap"><img src="rummikub-joker.png" class="tile-img-crop" alt="Rummikub joker"></div>
       <div class="game-info">
         <div class="game-name">Rummikub Champions League</div>
         <div class="game-sub">Stand, uitslagen en statistieken</div>
