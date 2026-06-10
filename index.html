@@ -56,10 +56,11 @@
   .stand-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg2); border-radius: var(--radius); border: 0.5px solid var(--border); }
   .stand-rank { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
   .stand-name { font-size: 15px; font-weight: 500; flex: 1; }
-  .stand-wins { font-size: 22px; font-weight: 600; color: var(--purple-600); min-width: 28px; text-align: right; }
-  .stand-meta { font-size: 12px; color: var(--text3); text-align: right; }
-  .stand-item.rank-1 { background: var(--amber-50); border-color: rgba(185,134,11,0.25); }
-  .stand-item.rank-1 .stand-wins { color: var(--gold); }
+  .stand-stats { display: flex; gap: 14px; align-items: center; }
+  .stand-stat { text-align: center; }
+  .stand-stat-val { font-size: 18px; font-weight: 600; color: var(--purple-600); display: block; }
+  .stand-stat-lbl { font-size: 11px; color: var(--text3); white-space: nowrap; }
+  .stand-item.rank-1 .stand-stat-val { color: var(--gold); }
   @media (prefers-color-scheme: dark) {
     .stand-item.rank-1 { background: #2a2510; border-color: rgba(185,134,11,0.3); }
   }
@@ -152,10 +153,10 @@ const firebaseConfig = {
 // COMPETITIES — spelers per competitie
 // ══════════════════════════════════════════
 const COMPS = [
-  { id: "comp1", label: "Competitie 1 (4p)", players: ["Riva","Jesper","Mama","Papa"] },
-  { id: "comp2", label: "Competitie 2 (3p)", players: ["Riva","Mama","Papa"] },
-  { id: "comp3", label: "Competitie 3 (2p)", players: ["Riva","Papa"] },
-  { id: "comp4", label: "Competitie 4 (2p)", players: ["Joyce","Cees"] }
+  { id: "comp1", label: "C-Jo-Je-R", players: ["Riva","Jesper","Mama","Papa"] },
+  { id: "comp2", label: "C-Jo-R", players: ["Riva","Mama","Papa"] },
+  { id: "comp3", label: "C-R", players: ["Riva","Papa"] },
+  { id: "comp4", label: "C-Jo", players: ["Joyce","Cees"] }
 ];
 
 // ══════════════════════════════════════════
@@ -306,7 +307,7 @@ function calcStandings(games, players) {
   return players.map(p => ({
     name: p, wins: stats[p].wins, games: stats[p].games, total: stats[p].total,
     avg: stats[p].games ? Math.round(stats[p].total / stats[p].games) : 0
-  })).sort((a,b) => b.wins - a.wins || a.total - b.total);
+  })).sort((a,b) => a.total - b.total || b.wins - a.wins);
 }
 
 const MEDALS = ['🥇','🥈','🥉',''];
@@ -330,13 +331,20 @@ function renderAll(compId, games) {
         ${standings.map((s,i) => `
           <div class="stand-item${i===0?' rank-1':''}">
             <div class="stand-rank">${MEDALS[Math.min(i,3)]}</div>
-            <div>
-              <div class="stand-name">${s.name}</div>
-              <div class="stand-meta">${s.games} potjes · gem. ${s.avg} pts</div>
-            </div>
-            <div>
-              <div class="stand-wins">${s.wins}</div>
-              <div class="stand-meta">gewonnen</div>
+            <div class="stand-name">${s.name}</div>
+            <div class="stand-stats">
+              <div class="stand-stat">
+                <span class="stand-stat-val">${s.total}</span>
+                <span class="stand-stat-lbl">totaal pts</span>
+              </div>
+              <div class="stand-stat">
+                <span class="stand-stat-val">${s.wins}</span>
+                <span class="stand-stat-lbl">gewonnen</span>
+              </div>
+              <div class="stand-stat">
+                <span class="stand-stat-val">${s.avg}</span>
+                <span class="stand-stat-lbl">gem. pts</span>
+              </div>
             </div>
           </div>`).join('')}
       </div>
